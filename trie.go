@@ -1,7 +1,13 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+)
+
+var (
+	//Returned if the key/value is not available
+	ElemNotAvailable = errors.New("Unable to find the given value for the key")
 )
 
 const keySpace = 62
@@ -13,6 +19,8 @@ var table = make(map[rune]int, 62)
 type trie struct {
 	space bool
 	child [keySpace]*trie
+	value string
+	count int64
 }
 
 func buildMap() {
@@ -36,9 +44,7 @@ func createNode() *trie {
 
 func (t *trie) InsertKey(key string) string {
 	var arr = []rune(key)
-	fmt.Println("hey ", arr)
-	fmt.Println(table)
-	var temp *trie = t
+	var temp = t
 	for i := 0; i < depth; i++ {
 		ind := table[arr[i]]
 		fmt.Println(temp, ind)
@@ -50,18 +56,18 @@ func (t *trie) InsertKey(key string) string {
 	return "suc"
 }
 
-func (t *trie) Fetch(key string) string {
-	var temp *trie = t
+func (t *trie) Fetch(key string) (string, error) {
+	var temp = t
 	var arr = []rune(key)
 	for i := 0; i < depth; i++ {
 		ind := table[arr[i]]
-		fmt.Println(temp)
 		if temp.child[ind] == nil {
-			return "fail"
+			return "", ElemNotAvailable
 		}
 		temp = temp.child[ind]
 	}
-	return "success"
+
+	return "", temp.value
 }
 
 func main() {
