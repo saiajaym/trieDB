@@ -20,7 +20,6 @@ const maptable = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
 var table = make(map[rune]int, 62)
 
 type trie struct {
-	space bool
 	child [keySpace]*trie
 	value *string
 	count int64
@@ -36,12 +35,14 @@ func buildMap() {
 //inits trie, call this for the first time
 func Init() *trie {
 	buildMap()
-	return new(trie)
+	t := new(trie)
+	t.count = 0
+	return t
 }
 
 func createNode() *trie {
 	var newNode = new(trie)
-	newNode.space = true
+	newNode.count = 0
 	return newNode
 }
 
@@ -84,7 +85,7 @@ func (t *trie) Fetch(key string) (string, error) {
 		temp = temp.child[ind]
 	}
 
-	return "", nil
+	return *temp.value, nil
 }
 
 func (t *trie) Insertvalue(value string) (string, error) {
@@ -101,15 +102,15 @@ func insert(t *trie, level int, value string) (string, error) {
 		t.count++
 		return "", nil
 	}
-	fmt.Println(level, t.value)
-	for _, temp := range t.child {
-		if temp.count < int64(math.Pow(62, float64(depth-level))) {
+	for loc, temp := range t.child {
+		if temp != nil && temp.count < int64(math.Pow(62, float64(depth-level))) {
 			key, err := insert(temp, level+1, value)
 			if err == nil {
+				key = string(maptable[loc]) + key
 				t.count++
-				return "", nil
+				return key, nil
 			}
-			if err == KeySpaceExhausted {
+			if err == KeySpaceExhausted || err == ValueAlreadyPresent {
 				continue
 			}
 			return "", err
@@ -121,5 +122,19 @@ func insert(t *trie, level int, value string) (string, error) {
 func main() {
 	t := Init()
 	fmt.Println(t.Loadkeys([]string{"asdqwe", "qwerty"}))
+	fmt.Println(t.Insertvalue("hola bitch"))
+	fmt.Println(t.Fetch("asdqwe"))
+	fmt.Println(t.Insertvalue("test me out"))
 	fmt.Println(t.Fetch("qwerty"))
+	s := "asfdf"
+	for i := 0; i < 62; i++ {
+		fmt.Println("Insering", s+string(maptable[i]))
+		t.InsertKey(s + string(maptable[i]))
+		fmt.Println(t.Insertvalue("hre"))
+	}
+	//fmt.Println(t.InsertKey("asfdgg"))
+	//fmt.Println(t.InsertKey("asfdgh"))
+	fmt.Println(t.Insertvalue("BABYYYY"))
+	fmt.Println(t.Fetch("asfdgg"))
+	s = s + "a"
 }
