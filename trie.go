@@ -18,6 +18,7 @@ const depth = 6
 const maptable = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 
 var table = make(map[rune]int, 62)
+var powTable []int64
 
 type trie struct {
 	child [keySpace]*trie
@@ -119,7 +120,7 @@ func insert(t *trie, level int, value string) (string, error) {
 	return "", KeySpaceExhausted
 }
 
-func main() {
+/*func main() {
 	t := Init()
 	fmt.Println(t.Loadkeys([]string{"asdqwe", "qwerty"}))
 	fmt.Println(t.Insertvalue("hola bitch"))
@@ -137,4 +138,4 @@ func main() {
 	fmt.Println(t.Insertvalue("BABYYYY"))
 	fmt.Println(t.Fetch("asfdgg"))
 	s = s + "a"
-}
+}*/
