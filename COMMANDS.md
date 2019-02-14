@@ -5,7 +5,7 @@ Start graceful disconnection
 Fetch
 ------
 Fetch: search term
-Ex: fetch:asdf9K
+Ex: FETCH:asdf9K
 
 VINSERT
 -------
